@@ -1,10 +1,6 @@
 # A chatbot that you can ask questions about 18th-century English law
 This repository contains all the source code for an expert system from 18th-century English Law, created for my CS152: Harnessing Artificial Intelligence Algorithms final.
 
-To ensure your project can be evaluated effectively, include the following instructions in your submission (e.g., in a `README.md` file or at the top of your documentation).
-
----
-
 ## Instructions for Running Legal-ES
 
 ### 1. Prerequisites

@@ -63,13 +63,6 @@ find_year(Y_per) --> [_], find_year(Y_per).
 
 % --- VERDICT RULES ---
 
-% Rule: Pious Perjury (Jury Mercy for women/first-timers)
-verdict(partial_verdict_transportation) :-
-    offense(theft),
-    location(dwelling_house),
-    item_value_shillings(V), V >= 40,
-    % The AI "predicts" the jury will intervene for females or first-timers
-    (gender(female) ; circumstance(first_offense)).
 
 % Rule: Benefit of Clergy (The literacy loophole)
 verdict(branding_and_release) :-
@@ -77,6 +70,14 @@ verdict(branding_and_release) :-
     circumstance(first_offense),
     ability(can_read),
     year_period(pre_1706).
+
+% Rule: Pious Perjury (Jury Mercy for women/first-timers)
+verdict(partial_verdict_transportation) :-
+    offense(theft),
+    location(dwelling_house),
+    item_value_shillings(V), V >= 40,
+    % The AI "predicts" the jury will intervene for females or first-timers
+    (gender(female) ; circumstance(first_offense)).
 
 % Rule: The "Standard" Death Sentence (Only if Mercy/Clergy didn't trigger)
 verdict(death_by_hanging) :-

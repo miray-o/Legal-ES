@@ -1,132 +1,41 @@
 # A chatbot that you can ask questions about 18th-century English law
 This repository contains all the source code for an expert system from 18th-century English Law, created for my CS152: Harnessing Artificial Intelligence Algorithms final.
 
-This project addresses the challenge of modeling historical legal outcomes from the Old Bailey Online archives by framing 18th-century English law as a formal Expert System. Historically, judicial decisions are often perceived as purely narrative; however, by applying Predicate Logic, I encoded the court’s “working knowledge” of factors such as crime severity, defendant status, and evidence into a deductive framework that yields the case’s outcome (an overly simplified version, of course). By simplifying a large dataset into a deductive logic framework, I created a digital product that makes the general working system of 18th-century English law a fun learning experience for non-experts and kids.
+To ensure your project can be evaluated effectively, include the following instructions in your submission (e.g., in a `README.md` file or at the top of your documentation).
 
-## Enhanced with Semantic Mapping via Definite Clause Grammars (DCGs)
+---
 
-The system now includes **Definite Clause Grammars (DCGs)** for sophisticated natural language parsing and semantic mapping.
+## Instructions for Running Legal-ES
 
-### DCG Semantic Parsing Overview
+### 1. Prerequisites
+Before running the application, ensure the following are installed on your system:
 
-DCGs enable the system to parse user input in natural language and automatically extract semantic information that populates the knowledge base. This eliminates the need for rigid question-answer formats.
+* **Python 3.10+**: The core language.
+* **SWI-Prolog**: The logic engine. **Pyswip** requires the actual SWI-Prolog binary to be installed on your operating system (Download at [swi-prolog.org](https://www.swi-prolog.org/)).
+* **Tkinter**: This is typically bundled with Python. If you are on Linux, you may need to install it manually (e.g., `sudo apt-get install python3-tk`).
+* **Pyswip**: The bridge between Python and Prolog. Install via pip:
+    ```bash
+    pip install pyswip
+    ```
 
-#### How DCG Semantic Mapping Works
+### 2. How to Run the Application
+1.  Navigate to the project root directory.
+2.  Ensure `kb.pl` and `legal_gui.py` are in the same folder.
+3.  Execute the following command:
+    ```bash
+    python legal_gui.py
+    ```
 
-1. **User Input** → Natural language (e.g., "theft from a shop")
-2. **Tokenization** → Convert to token list: `[theft, from, a, shop]`
-3. **DCG Parsing** → Match against grammar rules to extract semantics
-4. **Semantic Extraction** → Identify: `offense(theft)`, `location(shop)`
-5. **Knowledge Base Update** → Assert facts for inference
+### 3. Running the Test Cases
+To verify the **Symbolic AI** logic, enter the following narratives into the chat interface. Each case is designed to test a specific layer of the inference engine:
 
-#### Supported Semantic Categories
+| Test Case | Narrative to Input | Expected Result / AI Logic Tested |
+| :--- | :--- | :--- |
+| **TC1: Seamless Seeding** | *"A man stole 50 shillings from a dwelling house in 1678. He can read and this was his first time."* | **Verdict: Branding & Release.** Verifies successful symbol grounding (DCG) and NLP seeding. |
+| **TC2: Conflict Resolution** | *"A woman stole 50 shillings from a dwelling house."* | **Verdict: Partial Verdict.** Verifies **Rule Prioritization** (Jury Mercy for women overrides the Death Statute). |
+| **TC3: Short-Circuiting** | *"A man committed highway robbery."* | **Verdict: Death by Hanging.** Verifies search efficiency; engine skips irrelevant questions (e.g., value) for non-clergyable crimes. |
+| **TC4: Backward Chaining** | *"A man stole some silk."* | **Action: Follow-up Questions.** Verifies the interactive loop; the agent should ask for missing variables (value and location). |
 
-| Category | DCG Rule | Example Inputs |
-|----------|----------|-----------------|
-| **Offenses** | `parse_offense/2` | theft, murder, robbery, burglary, coining |
-| **Locations** | `parse_location/2` | shop, dwelling house, street, marketplace |
-| **Gender** | `parse_gender/2` | male, female, man, woman |
-| **Circumstances** | `parse_circumstance/2` | first offense, malice aforethought, premeditation |
-| **Abilities** | `parse_ability/2` | can read, illiterate, educated |
-| **Values** | `parse_value/2` | "5 shillings", "40 pence", "10 s." |
-
-#### Example Usage
-
-```prolog
-?- parse_user_input("theft from a dwelling house", Attr, Val).
-Attr = offense,
-Val = theft ;
-Attr = location,
-Val = dwelling_house.
-
-?- process_natural_input("first time offender").
-Parsed: circumstance(first_offense)
-true.
-```
-
-#### DCG Grammar Rules (Simplified Example)
-
-```prolog
-% Parse offense keywords
-parse_offense(offense, theft) --> [theft] | [steal] | [stole] | [stolen].
-
-% Parse location keywords
-parse_location(location, shop) --> [shop] | [merchant] | [store].
-
-% Parse numerical values
-parse_value(item_value_shillings, Value) --> 
-    number(N), 
-    shilling_unit,
-    { Value is N }.
-```
-
-### Integration with Prolog Inference Engine
-
-The DCG parser is tightly integrated with the expert system's inference engine:
-
-1. **Dynamic Knowledge Base** → Parsed facts are asserted dynamically
-2. **Inference** → Legal rules query the populated knowledge base
-3. **Verdict Generation** → Case verdict is derived from accumulated facts
-
-### Running the System
-
-```bash
-python3 prolog_engine.py
-```
-
-The enhanced chatbot now accepts:
-- **Natural language input** (parsed by DCGs)
-- **Traditional yes/no responses** (fallback support)
-- **Numerical values** (e.g., "5 shillings")
-- **Complex case descriptions** (e.g., "murder with malice aforethought")
-
-### DCG Testing & Demonstration
-
-To test the DCG semantic parser directly in Prolog:
-
-```prolog
-?- demonstrate_dcg.
-```
-
-This runs through example inputs and displays parsed semantic representations.
-
-### Architecture
-
-```
-┌─────────────────┐
-│   User Input    │
-└────────┬────────┘
-         │
-    ┌────▼────┐
-    │Tokenizer│
-    └────┬────┘
-         │
-    ┌────▼──────────┐
-    │  DCG Parser   │  (Definite Clause Grammars)
-    └────┬──────────┘
-         │
-    ┌────▼──────────────┐
-    │Semantic Extractor │
-    └────┬──────────────┘
-         │
-    ┌────▼──────────────┐
-    │Knowledge Base     │  (dynamic facts)
-    └────┬──────────────┘
-         │
-    ┌────▼──────────────┐
-    │Inference Engine   │  (Prolog rules)
-    └────┬──────────────┘
-         │
-    ┌────▼──────────────┐
-    │  Verdict Output   │
-    └───────────────────┘
-```
-
-### Key Features
-
-✅ **Natural Language Processing** — DCGs parse flexible user input
-✅ **Semantic Mapping** — Extracts case facts from text
-✅ **Dynamic Knowledge Base** — Facts asserted during runtime
-✅ **Backward Chaining** — Inference driven by verdict rules
-✅ **Historical Accuracy** — Rules based on Old Bailey legal precedents
-✅ **Extensible** — Easy to add new grammar rules and semantic categories
+### 4. Troubleshooting
+* **"SWI-Prolog not found"**: Ensure SWI-Prolog is added to your system's PATH. On macOS, you may need to manually point to the library in the code using `os.environ['LD_LIBRARY_PATH']`.
+* **NestedQueryError**: This occurs if the Prolog query is interrupted. Restart the application to clear the internal state of the inference engine.

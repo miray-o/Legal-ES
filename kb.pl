@@ -131,7 +131,7 @@ ability(X) :- ask(ability, X).
 item_value_shillings(X) :- ask(item_value_shillings, X).
 year_period(X) :- ask(year_period, X).
 
-% --- ASKING CLAUSES (Provided Framework) ---
+% --- ASKING CLAUSES ---
 ask(A, V) :-
     known(yes, A, V), % Success if already known
     !.

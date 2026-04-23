@@ -70,7 +70,7 @@ class LegalChatbotGUI:
             else:
                 self.log(f"\n[The Court is unclear on the {attr_name}. Please provide detail:]")
             
-            # BLOCKING WAIT: This is the 'bare minimum' magic
+            # BLOCKING WAIT
             self.waiting_for_user = True
             self.root.wait_variable(self.input_value) 
             
